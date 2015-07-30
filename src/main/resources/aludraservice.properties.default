@@ -1,0 +1,1 @@
+org.aludratest.service.database.DatabaseService=org.aludratest.service.database.impl.DatabaseServiceImpl
