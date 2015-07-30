@@ -115,7 +115,7 @@ public class DatabaseServiceImpl extends AbstractConfigurableAludraService imple
 
     private DatabaseActionImpl getActions() {
         if (actions == null) {
-            actions = new DatabaseActionImpl(connection);
+			actions = new DatabaseActionImpl(connection, config);
         }
 
         return actions;

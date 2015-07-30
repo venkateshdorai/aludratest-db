@@ -21,11 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Iterator;
 
 import org.aludratest.service.database.tablecolumn.DoubleColumn;
@@ -34,69 +29,14 @@ import org.aludratest.service.database.tablecolumn.IntColumn;
 import org.aludratest.service.database.tablecolumn.LongColumn;
 import org.aludratest.service.database.tablecolumn.StringColumn;
 import org.aludratest.testcase.TestStatus;
-import org.aludratest.testing.service.AbstractAludraServiceTest;
 import org.aludratest.util.validator.EqualsValidator;
-import org.databene.commons.FileUtil;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /** Tests the {@link DatabaseService}.
  * @author Volker Bergmann
  * @author falbrech */
 @SuppressWarnings("javadoc")
-public class DatabaseServiceTest extends AbstractAludraServiceTest {
-
-    private DatabaseService service;
-
-    @Before
-    public void setUp() throws Exception {
-        // force delete existing database, if any
-        File fDbDir = new File("target/test-db");
-        if (fDbDir.isDirectory()) {
-            FileUtil.deleteDirectory(fDbDir);
-        }
-
-        // create an in-memory Derby database
-        System.setProperty("derby.system.home", fDbDir.getAbsolutePath());
-        Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-
-        Connection conn = DriverManager.getConnection("jdbc:derby:testdb;create=true");
-        String sql = "CREATE TABLE test1 (test_id INTEGER NOT NULL PRIMARY KEY, test_value1 VARCHAR(100), test_value2 CHAR(10), test_value3 BIGINT, test_value4 FLOAT, test_value5 DECIMAL(12,4))";
-        executeStatement(conn, sql);
-
-        sql = "INSERT INTO test1 (test_id, test_value1, test_value2, test_value3, test_value4, test_value5) VALUES (1, 'Hello World', 'Bla', "
-                + (Integer.MAX_VALUE + 2l) + ", 17.5, 23.1234)";
-        executeStatement(conn, sql);
-        sql = "INSERT INTO test1 (test_id, test_value1, test_value2, test_value3, test_value4, test_value5) VALUES (2, 'A test', NULL, "
-                + (Integer.MIN_VALUE - 2l) + ", NULL, 23.1234)";
-        executeStatement(conn, sql);
-
-        // for insert tests
-        sql = "CREATE TABLE test2 (test_id INTEGER NOT NULL PRIMARY KEY, test_value1 VARCHAR(100), test_value2 CHAR(10), test_value3 BIGINT, test_value4 FLOAT, test_value5 DECIMAL(12,4))";
-        executeStatement(conn, sql);
-
-        conn.close();
-
-        this.service = getLoggingService(DatabaseService.class, "dbtest");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        if (this.service != null) {
-            this.service.close();
-        }
-
-        try {
-            DriverManager.getConnection("jdbc:derby:testdb;shutdown=true");
-        }
-        catch (Throwable t) {
-        }
-        File fDbDir = new File("target/test-db");
-        if (fDbDir.isDirectory()) {
-            FileUtil.deleteDirectory(fDbDir);
-        }
-    }
+public class DatabaseServiceTest extends AbstractDatabaseServiceTest {
 
     @Test
     public void testAssertValidQuery() {
@@ -325,21 +265,6 @@ public class DatabaseServiceTest extends AbstractAludraServiceTest {
         // invalid statement
         assertEquals(0, service.perform().insert("INSERT INTO test2 WHERE nonexistingcolumn = '!'"));
         assertEquals(TestStatus.FAILEDAUTOMATION, testCase.getLastTestStep().getStatus());
-    }
-
-    private static void executeStatement(Connection conn, String sql) throws SQLException {
-        Statement stmt = null;
-        try {
-            stmt = conn.createStatement();
-            stmt.execute(sql);
-        }
-        finally {
-            try {
-                stmt.close();
-            }
-            catch (Exception e) {
-            }
-        }
     }
 
 }

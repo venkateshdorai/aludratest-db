@@ -23,31 +23,36 @@ import org.aludratest.service.database.tablecolumn.TableColumnFactory;
 
 /**
  * Database service interface for AludraTest.
+ * 
  * @author Volker Bergmann
  */
 @ServiceInterface(name = "Database Service", description = "Enables Tests of SQL based Databases.")
 @ConfigProperties({
-    @ConfigProperty(name = "jdbcUrl", description = "JDBC URL for the database connection.", required = true, type = String.class),
-    @ConfigProperty(name = "user", description = "User for the JDBC connection.", required = false, type = String.class),
-    @ConfigProperty(name = "password", description = "Password for the JDBC connection.", required = false, type = String.class),
-    @ConfigProperty(name = "jdbcDriverClass", description = "Fully qualified name of the JDBC Driver Class to use. The class must be on classpath, so consider including the appropriate dependency in your pom.xml. For surefire based executions, the dependency must also be added to the surefire plug-in as dependency (next to the AludraTest Surefire Provider).", required = true, type = String.class) })
+		@ConfigProperty(name = "jdbcUrl", description = "JDBC URL for the database connection.", required = true, type = String.class),
+		@ConfigProperty(name = "user", description = "User for the JDBC connection.", required = false, type = String.class),
+		@ConfigProperty(name = "password", description = "Password for the JDBC connection.", required = false, type = String.class),
+		@ConfigProperty(name = "jdbcDriverClass", description = "Fully qualified name of the JDBC Driver Class to use. The class must be on classpath, so consider including the appropriate dependency in your pom.xml. For surefire based executions, the dependency must also be added to the surefire plug-in as dependency (next to the AludraTest Surefire Provider).", required = true, type = String.class),
+		@ConfigProperty(name = "enable.dml", description = "Allow INSERT, UPDATE, and DELETE statements. By default, these types of statements are forbidden.", required = true, type = boolean.class, defaultValue = "false"),
+		@ConfigProperty(name = "enable.ddl", description = "Allow types of statements other than plain DML (SELECT, INSERT, UPDATE, DELETE), e.g. table creation and dropping, truncations etc. By default, these types of statements are forbidden.", required = true, type = boolean.class, defaultValue = "false") })
 public interface DatabaseService extends AludraService {
 
-    /** @return the related {@link DatabaseInteraction} */
-    @Override
-    DatabaseInteraction perform();
+	/** @return the related {@link DatabaseInteraction} */
+	@Override
+	DatabaseInteraction perform();
 
-    /** @return the related {@link DatabaseVerification} */
-    @Override
-    DatabaseVerification verify();
+	/** @return the related {@link DatabaseVerification} */
+	@Override
+	DatabaseVerification verify();
 
-    /** @return the related {@link DatabaseCondition} */
-    @Override
-    DatabaseCondition check();
+	/** @return the related {@link DatabaseCondition} */
+	@Override
+	DatabaseCondition check();
 
-    /** Returns the factory to be used to retrieve instances of different table column types.
-     * 
-     * @return The factory to be used to retrieve instances of different table column types. */
-    TableColumnFactory getTableColumnFactory();
+	/**
+	 * Returns the factory to be used to retrieve instances of different table column types.
+	 * 
+	 * @return The factory to be used to retrieve instances of different table column types.
+	 */
+	TableColumnFactory getTableColumnFactory();
 
 }

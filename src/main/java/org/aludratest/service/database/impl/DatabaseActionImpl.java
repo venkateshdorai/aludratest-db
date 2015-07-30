@@ -42,8 +42,11 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
 
     private Connection connection;
 
-    public DatabaseActionImpl(Connection connection) {
+	private DatabaseConfiguration config;
+
+	public DatabaseActionImpl(Connection connection, DatabaseConfiguration config) {
         this.connection = connection;
+		this.config = config;
     }
 
     @Override
@@ -68,6 +71,7 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
 
     @Override
     public DataRows query(String query, Object... parameters) {
+		validateStatementPermission(query);
         Statement stmt = null;
         try {
             ResultSet rs;
@@ -237,6 +241,7 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
     }
 
     private int insertUpdateDelete(String sqlStatement, String messageType, Object... parameters) {
+		validateStatementPermission(sqlStatement);
         Statement stmt = null;
         try {
             if (parameters.length > 0) {
@@ -263,7 +268,8 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
     }
 
     private int getQueryResultCount(String sql, int stopCount) throws SQLException {
-        Statement stmt = null;
+		validateStatementPermission(sql);
+		Statement stmt = null;
         try {
             stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -281,6 +287,32 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
             }
         }
     }
+
+	private void validateStatementPermission(String sql) {
+		sql = sql.trim().toUpperCase();
+
+		// this is a rather simple check. E.g. Teradata would have a "LOCK ROW FOR ACCESS" even in front of
+		// simple SELECT statements. Also, a semicolon separating multiple SQL commands (if supported by JDBC
+		// driver) would not be detected.
+		if (sql.startsWith("SELECT ")) {
+			return;
+		}
+
+		if (sql.matches("(INSERT INTO|UPDATE|DELETE) .*")) {
+			if (!config.isDmlEnabled()) {
+				throw new AutomationException(
+					"DML statement submitted, but not allowed for this database connection. Set enable.dml to true if required.");
+			}
+			// otherwise, OK
+			return;
+		}
+
+		// everything else is treated as DDL
+		if (!config.isDdlEnabled()) {
+			throw new AutomationException(
+					"DDL statement submitted, but not allowed for this database connection. Set enable.ddl to true if required.");
+		}
+	}
 
     private static CachedRowSet createCachedRowSet(ResultSet rs) throws SQLException {
         try {

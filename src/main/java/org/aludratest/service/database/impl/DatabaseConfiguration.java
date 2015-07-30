@@ -42,4 +42,11 @@ public class DatabaseConfiguration {
         return prefs.getRequiredStringValue("jdbcDriverClass");
     }
 
+	public boolean isDmlEnabled() {
+		return prefs.getBooleanValue("enable.dml");
+	}
+
+	public boolean isDdlEnabled() {
+		return prefs.getBooleanValue("enable.ddl");
+	}
 }
