@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2014 Hamburg Sud and the contributors.
+ * Copyright (C) 2015 Hamburg Sud and the contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
