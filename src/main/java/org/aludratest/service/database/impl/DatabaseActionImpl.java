@@ -168,9 +168,9 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
 	}
 
     @Override
-    public void assertEmptyQuery(String query) {
+	public void assertEmptyQuery(String query, Object... parameters) {
         try {
-            if (getQueryResultCount(query, 1) > 0) {
+			if (getQueryResultCount(query, 1, parameters) > 0) {
                 throw new FunctionalFailure("Query returned at least one row of data");
             }
         }
@@ -180,9 +180,9 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
     }
 
     @Override
-    public void assertNonEmptyQuery(String query) {
+	public void assertNonEmptyQuery(String query, Object... parameters) {
         try {
-            if (getQueryResultCount(query, 1) == 0) {
+			if (getQueryResultCount(query, 1, parameters) == 0) {
                 throw new FunctionalFailure("Query returned no rows of data");
             }
         }
@@ -192,9 +192,9 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
     }
 
     @Override
-    public void assertSingleRowQuery(String query) {
+	public void assertSingleRowQuery(String query, Object... parameters) {
         try {
-            int cnt = getQueryResultCount(query, 2);
+			int cnt = getQueryResultCount(query, 2, parameters);
             if (cnt == 0) {
                 throw new FunctionalFailure("Query returned no rows of data");
             }
@@ -208,9 +208,9 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
     }
 
     @Override
-    public void assertValidQuery(String query) {
+	public void assertValidQuery(String query, Object... parameters) {
         try {
-            getQueryResultCount(query, 0);
+			getQueryResultCount(query, 0, parameters);
         }
         catch (SQLException e) {
             throw new FunctionalFailure("Query is not valid");
@@ -267,12 +267,23 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
         }
     }
 
-    private int getQueryResultCount(String sql, int stopCount) throws SQLException {
+	private int getQueryResultCount(String sql, int stopCount, Object... parameters) throws SQLException {
 		validateStatementPermission(sql);
 		Statement stmt = null;
+		ResultSet rs = null;
         try {
-            stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+			if (parameters.length > 0) {
+				PreparedStatement ps = connection.prepareStatement(sql);
+				stmt = ps; // for auto-close in finally
+				for (int i = 0; i < parameters.length; i++) {
+					setPreparedStatementParameter(ps, i + 1, parameters[i]);
+				}
+				rs = ps.executeQuery();
+			}
+			else {
+				stmt = connection.createStatement();
+				rs = stmt.executeQuery(sql);
+			}
             int cnt = 0;
             while (rs.next() && cnt < stopCount) {
                 cnt++;
@@ -280,6 +291,11 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
             return cnt;
         }
         finally {
+			try {
+				rs.close();
+			}
+			catch (Throwable t) { // NOPMD
+			}
             try {
                 stmt.close();
             }

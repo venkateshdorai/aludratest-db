@@ -15,6 +15,7 @@
  */
 package org.aludratest.service.database;
 
+import org.aludratest.impl.log4testing.TechnicalArgument;
 import org.aludratest.impl.log4testing.TechnicalLocator;
 import org.aludratest.service.Verification;
 import org.aludratest.service.database.tablecolumn.TableColumn;
@@ -25,26 +26,46 @@ import org.databene.commons.Validator;
  * @author falbrech */
 public interface DatabaseVerification extends Verification {
 
-    /** Asserts that the given query can be executed without any database error. This can still mean that the query does not return
-     * any results.
-     * 
-     * @param query SQL query to execute. */
-    public void assertValidQuery(@TechnicalLocator String query);
+    /**
+	 * Asserts that the given query can be executed without any database error. This can still mean that the query does not return
+	 * any results.
+	 * 
+	 * @param query
+	 *            SQL query to execute.
+	 * @param parameters
+	 *            Parameters for the SQL statement, if the SQL statement is in PreparedStatement syntax.
+	 */
+	public void assertValidQuery(@TechnicalLocator String query, @TechnicalArgument Object... parameters);
 
-    /** Asserts that the given query can be executed without any database error and does <b>not</b> return any data.
-     * 
-     * @param query SQL query to execute. */
-    public void assertEmptyQuery(@TechnicalLocator String query);
+    /**
+	 * Asserts that the given query can be executed without any database error and does <b>not</b> return any data.
+	 * 
+	 * @param query
+	 *            SQL query to execute.
+	 * @param parameters
+	 *            Parameters for the SQL statement, if the SQL statement is in PreparedStatement syntax.
+	 */
+	public void assertEmptyQuery(@TechnicalLocator String query, @TechnicalArgument Object... parameters);
 
-    /** Asserts that the given query can be executed without any database error and returns at least one row of data.
-     * 
-     * @param query SQL query to execute. */
-    public void assertNonEmptyQuery(@TechnicalLocator String query);
+    /**
+	 * Asserts that the given query can be executed without any database error and returns at least one row of data.
+	 * 
+	 * @param query
+	 *            SQL query to execute.
+	 * @param parameters
+	 *            Parameters for the SQL statement, if the SQL statement is in PreparedStatement syntax.
+	 */
+	public void assertNonEmptyQuery(@TechnicalLocator String query, @TechnicalArgument Object... parameters);
 
-    /** Asserts that the given query can be executed without any database error and returns <b>exactly</b> one row of data.
-     * 
-     * @param query SQL query to execute. */
-    public void assertSingleRowQuery(@TechnicalLocator String query);
+    /**
+	 * Asserts that the given query can be executed without any database error and returns <b>exactly</b> one row of data.
+	 * 
+	 * @param query
+	 *            SQL query to execute.
+	 * @param parameters
+	 *            Parameters for the SQL statement, if the SQL statement is in PreparedStatement syntax.
+	 */
+	public void assertSingleRowQuery(@TechnicalLocator String query, @TechnicalArgument Object... parameters);
 
 	/**
 	 * Asserts that the value of the given column in the given row of a result set of a query matches the given validator.
