@@ -15,9 +15,9 @@
  */
 package org.aludratest.service.database;
 
-import org.aludratest.impl.log4testing.TechnicalArgument;
-import org.aludratest.impl.log4testing.TechnicalLocator;
 import org.aludratest.service.Interaction;
+import org.aludratest.service.TechnicalArgument;
+import org.aludratest.service.TechnicalLocator;
 import org.aludratest.service.database.tablecolumn.TableColumn;
 
 /**

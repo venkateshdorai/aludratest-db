@@ -15,8 +15,8 @@
  */
 package org.aludratest.service.database;
 
-import org.aludratest.impl.log4testing.TechnicalLocator;
 import org.aludratest.service.Condition;
+import org.aludratest.service.TechnicalLocator;
 import org.aludratest.service.database.tablecolumn.TableColumn;
 import org.databene.commons.Validator;
 
