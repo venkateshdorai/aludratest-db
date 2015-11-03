@@ -42,14 +42,14 @@
 	</dependencies>
 
 	<scm>
-		<connection>scm:git:https://git@github.com:AludraTest/aludratest-hpalm-connector.git</connection>
-		<developerConnection>scm:git:https://git@github.com/AludraTest/aludratest-hpalm-connector.git</developerConnection>
-		<url>https://github.com/AludraTest/aludratest-hpalm-connector.git</url>
+		<connection>scm:git:https://git@github.com:AludraTest/aludratest-db.git</connection>
+		<developerConnection>scm:git:https://git@github.com/AludraTest/aludratest-db.git</developerConnection>
+		<url>https://github.com/AludraTest/aludratest-db.git</url>
 		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
-		<url>https://github.com/AludraTest/aludratest-hpalm-connector/issues</url>
+		<url>https://github.com/AludraTest/aludratest-db/issues</url>
 		<system>GitHub Issues</system>
 	</issueManagement>
 
