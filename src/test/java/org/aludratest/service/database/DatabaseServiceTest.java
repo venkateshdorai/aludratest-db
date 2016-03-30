@@ -41,61 +41,61 @@ public class DatabaseServiceTest extends AbstractDatabaseServiceTest {
     @Test
     public void testAssertValidQuery() {
         service.verify().assertValidQuery("SELECT * FROM test1");
-        assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
         service.verify().assertValidQuery("ELECT * FROM test1");
-        assertEquals(TestStatus.FAILED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILED, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testAssertEmptyQuery() {
         service.verify().assertEmptyQuery("SELECT * FROM test1 WHERE test_id IS NULL");
-        assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
         service.verify().assertEmptyQuery("SELECT * FROM test1 WHERE test_id IS NOT NULL");
-        assertEquals(TestStatus.FAILED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILED, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testAssertEmptyQuery_invalid() {
         service.verify().assertEmptyQuery("ELECT * FROM test1 WHERE test_id IS NULL");
-        assertEquals(TestStatus.FAILEDAUTOMATION, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILEDAUTOMATION, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testAssertNonEmptyQuery() {
         service.verify().assertNonEmptyQuery("SELECT * FROM test1 WHERE test_id IS NOT NULL");
-        assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
         service.verify().assertNonEmptyQuery("SELECT * FROM test1 WHERE test_id IS NULL");
-        assertEquals(TestStatus.FAILED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILED, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testAssertNonEmptyQuery_invalid() {
         service.verify().assertNonEmptyQuery("SELECT * FROM test1 WHERE tst_id IS NULL");
-        assertEquals(TestStatus.FAILEDAUTOMATION, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILEDAUTOMATION, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testAssertSingleRowQuery_positive() {
         service.verify().assertSingleRowQuery("SELECT * FROM test1 WHERE test_id = 1");
-        assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testAssertSingleRowQuery_negative_multi() {
         service.verify().assertSingleRowQuery("SELECT * FROM test1 WHERE test_id IS NOT NULL");
-        assertEquals(TestStatus.FAILED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILED, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testAssertSingleRowQuery_negative_empty() {
         service.verify().assertSingleRowQuery("SELECT * FROM test1 WHERE test_id IS NULL");
-        assertEquals(TestStatus.FAILED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILED, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testAssertSingleRowQuery_negative_invalid() {
         service.verify().assertSingleRowQuery("SELECT * FROM test1 WHERE tst_id IS NULL");
-        assertEquals(TestStatus.FAILEDAUTOMATION, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILEDAUTOMATION, getLastTestStep().getTestStatus());
     }
 
 	@Test
@@ -103,38 +103,38 @@ public class DatabaseServiceTest extends AbstractDatabaseServiceTest {
 		DataRows rows = service.perform().query("SELECT * FROM test1 WHERE test_id = ?", Integer.valueOf(1));
 		service.verify().assertValueMatches(rows, 1, service.getTableColumnFactory().createStringColumn("test_value1"),
 				new EqualsValidator("Hello World"));
-		assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
 		service.verify().assertValueMatches(rows, 1, service.getTableColumnFactory().createStringColumn("test_value1"),
 				new EqualsValidator("Hello"));
-		assertEquals(TestStatus.FAILED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILED, getLastTestStep().getTestStatus());
 	}
 
 	@Test
     public void testIsValidQuery() {
         assertTrue(service.check().isValidQuery("SELECT * FROM test1"));
-        assertNull(testCase.getLastTestStep());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
         assertFalse(service.check().isValidQuery("ELECT * FROM test1"));
-        assertNull(testCase.getLastTestStep());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testIsEmptyQuery() {
         assertTrue(service.check().isEmptyQuery("SELECT * FROM test1 WHERE test_id IS NULL"));
-        assertNull(testCase.getLastTestStep());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
         assertFalse(service.check().isEmptyQuery("SELECT * FROM test1"));
-        assertNull(testCase.getLastTestStep());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
         assertFalse(service.check().isEmptyQuery("SELECT * FROM foo"));
-        assertNull(testCase.getLastTestStep());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testIsNonEmptyQuery() {
         assertTrue(service.check().isNonEmptyQuery("SELECT * FROM test1"));
-        assertNull(testCase.getLastTestStep());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
         assertFalse(service.check().isNonEmptyQuery("SELECT * FROM test1 WHERE test_id IS NULL"));
-        assertNull(testCase.getLastTestStep());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
         assertFalse(service.check().isNonEmptyQuery("SELECT * FROM foo"));
-        assertNull(testCase.getLastTestStep());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
     }
 
     @Test
@@ -156,17 +156,17 @@ public class DatabaseServiceTest extends AbstractDatabaseServiceTest {
         assertEquals("A test", row.getValue(service, sc));
 
         assertFalse(iter.hasNext());
-        assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
     }
 
 	@Test
 	public void testParameterizedQuery() {
 		DataRows rows = service.perform().query("SELECT * FROM test1 WHERE test_value1 = ? AND test_id = ?", "Hello World", 1);
-		assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
 		assertNotNull(rows);
 		assertEquals(1, rows.getRowCount());
 		rows = service.perform().query("SELECT * FROM test1 WHERE test_value1 = ? AND test_id = ?");
-		assertEquals(TestStatus.FAILEDAUTOMATION, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILEDAUTOMATION, getLastTestStep().getTestStatus());
 		assertNull(rows);
 	}
 
@@ -174,7 +174,7 @@ public class DatabaseServiceTest extends AbstractDatabaseServiceTest {
     public void testInvalidQuery() {
         DataRows rows = service.perform().query("SELECT * FROM nosuchtable");
         assertNull(rows);
-        assertEquals(TestStatus.FAILEDAUTOMATION, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILEDAUTOMATION, getLastTestStep().getTestStatus());
     }
 
     @Test
@@ -182,7 +182,7 @@ public class DatabaseServiceTest extends AbstractDatabaseServiceTest {
         DataRows rows = service.perform().query("SELECT * FROM test1 WHERE test_id IS NULL");
         assertNotNull(rows);
         assertEquals(0, rows.getRowCount());
-        assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
     }
 
     @Test
@@ -216,13 +216,13 @@ public class DatabaseServiceTest extends AbstractDatabaseServiceTest {
 
         IntColumn ic = service.getTableColumnFactory().createIntColumn("test_value3");
         assertNull(row.getValue(service, ic));
-        assertEquals(TestStatus.FAILEDAUTOMATION, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILEDAUTOMATION, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testUpdate() {
         assertEquals(1, service.perform().update("UPDATE test1 SET test_value1 = 'My Test Value' WHERE test_id = 1"));
-        assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
         DataRows rows = service.perform().query("SELECT * FROM test1");
         Iterator<DataRow> iter = rows.iterator();
         DataRow row = iter.next();
@@ -231,7 +231,7 @@ public class DatabaseServiceTest extends AbstractDatabaseServiceTest {
 
         // update more than one row
         assertEquals(2, service.perform().update("UPDATE test1 SET test_value1 = 'My Test Value'"));
-        assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
 
         for (DataRow dataRow : service.perform().query("SELECT * FROM test1")) {
             assertEquals("My Test Value", dataRow.getValue(service, sc));
@@ -239,32 +239,32 @@ public class DatabaseServiceTest extends AbstractDatabaseServiceTest {
 
         // invalid statement
         assertEquals(0, service.perform().update("UPDATE test1 SET nonexistingcolumn = '!'"));
-        assertEquals(TestStatus.FAILEDAUTOMATION, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILEDAUTOMATION, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testDelete() {
         assertEquals(2, service.perform().delete("DELETE FROM test1"));
-        assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
         DataRows rows = service.perform().query("SELECT * FROM test1");
         assertEquals(0, rows.getRowCount());
-        assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
 
         // invalid statement
         assertEquals(0, service.perform().delete("DELETE FROM test1 WHERE nonexistingcolumn = '!'"));
-        assertEquals(TestStatus.FAILEDAUTOMATION, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILEDAUTOMATION, getLastTestStep().getTestStatus());
     }
 
     @Test
     public void testInsert() {
         assertEquals(2, service.perform().insert("INSERT INTO test2 SELECT * FROM test1"));
-        assertEquals(TestStatus.PASSED, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
         DataRows rows = service.perform().query("SELECT * FROM test2");
         assertEquals(2, rows.getRowCount());
 
         // invalid statement
         assertEquals(0, service.perform().insert("INSERT INTO test2 WHERE nonexistingcolumn = '!'"));
-        assertEquals(TestStatus.FAILEDAUTOMATION, testCase.getLastTestStep().getStatus());
+		assertEquals(TestStatus.FAILEDAUTOMATION, getLastTestStep().getTestStatus());
     }
 
 }
