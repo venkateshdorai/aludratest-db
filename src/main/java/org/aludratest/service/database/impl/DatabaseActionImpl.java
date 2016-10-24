@@ -194,7 +194,7 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
 		waitForStatementRowCountCondition(query, new Validator<Integer>() {
 			@Override
 			public boolean valid(Integer object) {
-				return object.intValue() > 0;
+				return object.intValue() == 1;
 			}
 		}, "Query returned more than one row of data", parameters);
     }
