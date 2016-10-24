@@ -99,6 +99,27 @@ public class DatabaseServiceTest extends AbstractDatabaseServiceTest {
     }
 
 	@Test
+	public void testAssertNonEmptyQuery_withWait() {
+		DatabaseService waitService = getLoggingService(DatabaseService.class, "dbtestwait");
+		// start a thread which writes the desired row after 1 second (using the other service)
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(1000);
+				}
+				catch (InterruptedException e) {
+					return;
+				}
+				service.perform().insert("INSERT INTO test1 (test_id) VALUES(101)");
+			}
+		};
+		new Thread(r).start();
+		waitService.verify().assertNonEmptyQuery("SELECT * FROM test1 WHERE test_id = 101");
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
+	}
+
+	@Test
 	public void testAssertValueMatches() {
 		DataRows rows = service.perform().query("SELECT * FROM test1 WHERE test_id = ?", Integer.valueOf(1));
 		service.verify().assertValueMatches(rows, 1, service.getTableColumnFactory().createStringColumn("test_value1"),
