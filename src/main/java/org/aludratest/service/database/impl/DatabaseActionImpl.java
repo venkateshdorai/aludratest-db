@@ -36,6 +36,8 @@ import org.aludratest.service.database.DatabaseInteraction;
 import org.aludratest.service.database.DatabaseVerification;
 import org.aludratest.service.database.tablecolumn.TableColumn;
 import org.aludratest.testcase.event.attachment.Attachment;
+import org.aludratest.util.poll.PollService;
+import org.aludratest.util.poll.PolledTask;
 import org.databene.commons.Validator;
 
 public class DatabaseActionImpl implements DatabaseInteraction, DatabaseCondition, DatabaseVerification {
@@ -169,42 +171,32 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
 
     @Override
 	public void assertEmptyQuery(String query, Object... parameters) {
-        try {
-			if (getQueryResultCount(query, 1, parameters) > 0) {
-                throw new FunctionalFailure("Query returned at least one row of data");
-            }
-        }
-        catch (SQLException e) {
-            throw new AutomationException("Could not execute query", e);
-        }
+		waitForStatementRowCountCondition(query, new Validator<Integer>() {
+			@Override
+			public boolean valid(Integer object) {
+				return object.intValue() == 0;
+			}
+		}, "Query returned at least one row of data", parameters);
     }
 
     @Override
 	public void assertNonEmptyQuery(String query, Object... parameters) {
-        try {
-			if (getQueryResultCount(query, 1, parameters) == 0) {
-                throw new FunctionalFailure("Query returned no rows of data");
-            }
-        }
-        catch (SQLException e) {
-            throw new AutomationException("Could not execute query", e);
-        }
+		waitForStatementRowCountCondition(query, new Validator<Integer>() {
+			@Override
+			public boolean valid(Integer object) {
+				return object.intValue() > 0;
+			}
+		}, "Query returned no rows of data", parameters);
     }
 
     @Override
 	public void assertSingleRowQuery(String query, Object... parameters) {
-        try {
-			int cnt = getQueryResultCount(query, 2, parameters);
-            if (cnt == 0) {
-                throw new FunctionalFailure("Query returned no rows of data");
-            }
-            if (cnt > 1) {
-                throw new FunctionalFailure("Query returned more than one row of data");
-            }
-        }
-        catch (SQLException e) {
-            throw new AutomationException("Could not execute query", e);
-        }
+		waitForStatementRowCountCondition(query, new Validator<Integer>() {
+			@Override
+			public boolean valid(Integer object) {
+				return object.intValue() > 0;
+			}
+		}, "Query returned more than one row of data", parameters);
     }
 
     @Override
@@ -385,5 +377,37 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
             ps.setObject(index, value);
         }
     }
+
+	private void waitForStatementRowCountCondition(final String query, final Validator<Integer> validator,
+			final String failureMessage, final Object... parameters) {
+		PolledTask<Boolean> task = new PolledTask<Boolean>() {
+			@Override
+			public Boolean timedOut() {
+				throw new FunctionalFailure(failureMessage);
+			}
+
+			@Override
+			public Boolean run() {
+				try {
+					int cnt = getQueryResultCount(query, 2, parameters);
+					return validator.valid(Integer.valueOf(cnt)) ? Boolean.TRUE : null;
+				}
+				catch (SQLException e) {
+					throw new AutomationException("Could not execute query", e);
+				}
+			}
+		};
+
+		if (config.getVerifyWaitTimeout() == 0) {
+			// no polling
+			if (task.run() == null) {
+				task.timedOut();
+			}
+		}
+		else {
+			PollService poll = new PollService(config.getVerifyWaitTimeout(), config.getVerifyWaitInterval());
+			poll.poll(task);
+		}
+	}
 
 }

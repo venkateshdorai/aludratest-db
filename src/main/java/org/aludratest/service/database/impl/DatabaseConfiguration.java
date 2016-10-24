@@ -49,4 +49,12 @@ public class DatabaseConfiguration {
 	public boolean isDdlEnabled() {
 		return prefs.getBooleanValue("enable.ddl");
 	}
+
+	public int getVerifyWaitTimeout() {
+		return prefs.getIntValue("verify.wait.timeout");
+	}
+
+	public int getVerifyWaitInterval() {
+		return prefs.getIntValue("verify.wait.interval");
+	}
 }

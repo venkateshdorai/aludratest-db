@@ -33,7 +33,9 @@ import org.aludratest.service.database.tablecolumn.TableColumnFactory;
 		@ConfigProperty(name = "password", description = "Password for the JDBC connection.", required = false, type = String.class),
 		@ConfigProperty(name = "jdbcDriverClass", description = "Fully qualified name of the JDBC Driver Class to use. The class must be on classpath, so consider including the appropriate dependency in your pom.xml. For surefire based executions, the dependency must also be added to the surefire plug-in as dependency (next to the AludraTest Surefire Provider).", required = true, type = String.class),
 		@ConfigProperty(name = "enable.dml", description = "Allow INSERT, UPDATE, and DELETE statements. By default, these types of statements are forbidden.", required = true, type = boolean.class, defaultValue = "false"),
-		@ConfigProperty(name = "enable.ddl", description = "Allow types of statements other than plain DML (SELECT, INSERT, UPDATE, DELETE), e.g. table creation and dropping, truncations etc. By default, these types of statements are forbidden.", required = true, type = boolean.class, defaultValue = "false") })
+		@ConfigProperty(name = "enable.ddl", description = "Allow types of statements other than plain DML (SELECT, INSERT, UPDATE, DELETE), e.g. table creation and dropping, truncations etc. By default, these types of statements are forbidden.", required = true, type = boolean.class, defaultValue = "false"),
+		@ConfigProperty(name = "verify.wait.timeout", description = "Time to wait, in milliseconds, for assertion methods for the desired condition to become true. If 0 (default), no waiting at all is performed.", type = int.class, defaultValue = "0", required = false),
+		@ConfigProperty(name = "verify.wait.interval", description = "The interval, in milliseconds, between two executions of the same statement during a wait of an assertion method. Only used if waiting is enabled for assertion statements.", type = int.class, defaultValue = "200", required = false) })
 public interface DatabaseService extends AludraService {
 
 	/** @return the related {@link DatabaseInteraction} */

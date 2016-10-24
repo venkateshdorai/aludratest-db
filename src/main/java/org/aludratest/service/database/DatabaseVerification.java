@@ -38,7 +38,9 @@ public interface DatabaseVerification extends Verification {
 	public void assertValidQuery(@TechnicalLocator String query, @TechnicalArgument Object... parameters);
 
     /**
-	 * Asserts that the given query can be executed without any database error and does <b>not</b> return any data.
+	 * Asserts that the given query can be executed without any database error and does <b>not</b> return any data. If a waiting
+	 * mechanism is configured via {@link DatabaseService} configuration, the query is executed unless it does not return any
+	 * data, or a timout occurs (which would raise a Performance Exception).
 	 * 
 	 * @param query
 	 *            SQL query to execute.
@@ -48,7 +50,9 @@ public interface DatabaseVerification extends Verification {
 	public void assertEmptyQuery(@TechnicalLocator String query, @TechnicalArgument Object... parameters);
 
     /**
-	 * Asserts that the given query can be executed without any database error and returns at least one row of data.
+	 * Asserts that the given query can be executed without any database error and returns at least one row of data. If a waiting
+	 * mechanism is configured via {@link DatabaseService} configuration, the query is executed unless it does return at least one
+	 * row of data, or a timout occurs (which would raise a Performance Exception).
 	 * 
 	 * @param query
 	 *            SQL query to execute.
@@ -58,7 +62,9 @@ public interface DatabaseVerification extends Verification {
 	public void assertNonEmptyQuery(@TechnicalLocator String query, @TechnicalArgument Object... parameters);
 
     /**
-	 * Asserts that the given query can be executed without any database error and returns <b>exactly</b> one row of data.
+	 * Asserts that the given query can be executed without any database error and returns <b>exactly</b> one row of data. If a
+	 * waiting mechanism is configured via {@link DatabaseService} configuration, the query is executed unless it returns exactly
+	 * one row of data, or a timout occurs (which would raise a Performance Exception).
 	 * 
 	 * @param query
 	 *            SQL query to execute.
