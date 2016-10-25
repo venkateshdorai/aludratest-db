@@ -15,6 +15,7 @@
  */
 package org.aludratest.service.database.impl;
 
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -50,6 +51,28 @@ public class DataRowsImpl implements DataRows {
     public int getRowCount() {
         return rowCount;
     }
+
+	@Override
+	public String toString() {
+		return rowCount + " data row(s) with columns " + buildColumnNamesString();
+	}
+
+	private String buildColumnNamesString() {
+		StringBuilder sb = new StringBuilder();
+		try {
+			ResultSetMetaData meta = cachedRowSet.getMetaData();
+			for (int i = 1; i <= meta.getColumnCount(); i++) {
+				if (i > 1) {
+					sb.append(", ");
+				}
+				sb.append(meta.getColumnName(i));
+			}
+			return sb.toString();
+		}
+		catch (SQLException e) {
+			return "(unknown)";
+		}
+	}
 
     private class DataRowIterator implements Iterator<DataRow> {
 

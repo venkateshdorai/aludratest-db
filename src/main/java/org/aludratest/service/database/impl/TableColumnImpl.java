@@ -36,4 +36,9 @@ public abstract class TableColumnImpl<T> implements TableColumn<T> {
         return columnName;
     }
 
+	@Override
+	public String toString() {
+		return "Column " + columnName;
+	}
+
 }
