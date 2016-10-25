@@ -133,9 +133,9 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
     }
 
     @Override
-    public boolean isValidQuery(String query) {
+	public boolean isValidQuery(String query, Object... parameters) {
         try {
-            getQueryResultCount(query, 0);
+			getQueryResultCount(query, 0, parameters);
             return true;
         }
         catch (SQLException e) {
@@ -144,9 +144,9 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
     }
 
     @Override
-    public boolean isEmptyQuery(String query) {
+	public boolean isEmptyQuery(String query, Object... parameters) {
         try {
-            return getQueryResultCount(query, 1) == 0;
+			return getQueryResultCount(query, 1, parameters) == 0;
         }
         catch (SQLException e) {
             return false;
@@ -154,9 +154,9 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
     }
 
     @Override
-    public boolean isNonEmptyQuery(String query) {
+	public boolean isNonEmptyQuery(String query, Object... parameters) {
         try {
-            return getQueryResultCount(query, 1) > 0;
+			return getQueryResultCount(query, 1, parameters) > 0;
         }
         catch (SQLException e) {
             return false;

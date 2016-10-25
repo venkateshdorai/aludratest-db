@@ -25,27 +25,42 @@ import org.databene.commons.Validator;
  * @author falbrech */
 public interface DatabaseCondition extends Condition {
 
-    /** Checks if the given query can be executed without raising a database exception. This does not ensure that the query returns
-     * any results.
-     * 
-     * @param query SQL query to execute.
-     * @return <code>true</code> if the query could be executed without any database exception, <code>false</code> otherwise. The
-     *         database exception, if any, is not logged. */
-    public boolean isValidQuery(@TechnicalLocator String query);
+    /**
+	 * Checks if the given query can be executed without raising a database exception. This does not ensure that the query returns
+	 * any results.
+	 * 
+	 * @param query
+	 *            SQL query to execute, in PreparedStatement syntax.
+	 * @param parameters
+	 *            Parameters for the SQL query, in the order of placeholders of prepared syntax statement.
+	 * @return <code>true</code> if the query could be executed without any database exception, <code>false</code> otherwise. The
+	 *         database exception, if any, is not logged.
+	 */
+	public boolean isValidQuery(@TechnicalLocator String query, Object... parameters);
 
-    /** Returns <code>true</code> if the given query is valid, but does not return a single row of data. If the query is invalid or
-     * returns data, <code>false</code> is returned. Any database exception is not logged.
-     * 
-     * @param query SQL query to execute.
-     * @return <code>true</code> if the query is valid and did not return a single row of data, <code>false</code> otherwise. */
-    public boolean isEmptyQuery(@TechnicalLocator String query);
+    /**
+	 * Returns <code>true</code> if the given query is valid, but does not return a single row of data. If the query is invalid or
+	 * returns data, <code>false</code> is returned. Any database exception is not logged.
+	 * 
+	 * @param query
+	 *            SQL query to execute, in PreparedStatement syntax.
+	 * @param parameters
+	 *            Parameters for the SQL query, in the order of placeholders of prepared syntax statement.
+	 * @return <code>true</code> if the query is valid and did not return a single row of data, <code>false</code> otherwise.
+	 */
+	public boolean isEmptyQuery(@TechnicalLocator String query, Object... parameters);
 
-    /** Returns <code>true</code> if the given query is valid and returns at least one row of data. If the query is invalid or does
-     * not return data, <code>false</code> is returned. Any database exception is not logged.
-     * 
-     * @param query SQL query to execute.
-     * @return <code>true</code> if the query is valid and returned data, <code>false</code> otherwise. */
-    public boolean isNonEmptyQuery(@TechnicalLocator String query);
+    /**
+	 * Returns <code>true</code> if the given query is valid and returns at least one row of data. If the query is invalid or does
+	 * not return data, <code>false</code> is returned. Any database exception is not logged.
+	 * 
+	 * @param query
+	 *            SQL query to execute, in PreparedStatement syntax.
+	 * @param parameters
+	 *            Parameters for the SQL query, in the order of placeholders of prepared syntax statement.
+	 * @return <code>true</code> if the query is valid and returned data, <code>false</code> otherwise.
+	 */
+	public boolean isNonEmptyQuery(@TechnicalLocator String query, Object... parameters);
 
 	/**
 	 * Checks if the value of the given column in the given row of a result set of a query matches the given validator.
