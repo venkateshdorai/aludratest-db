@@ -196,7 +196,7 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
 			public boolean valid(Integer object) {
 				return object.intValue() == 1;
 			}
-		}, "Query returned more than one row of data", parameters);
+		}, "Query returned zero rows, or more than one row of data", parameters);
     }
 
     @Override
