@@ -81,4 +81,24 @@ public interface DatabaseInteraction extends Interaction {
      * @param message Message to log. */
     void reportInvalidState(String message);
 
+	/**
+	 * Begins a transaction. Following DML operations will not be committed until {@link #commitTransaction()} is called. <br>
+	 * By default, all DML operations are automatically committed. The underlying database connection switches to manual commit
+	 * mode when this method is called. <br>
+	 * If a transaction is already active, this method does nothing.
+	 */
+	void beginTransaction();
+
+	/**
+	 * Ends a transaction. All pending DML operations are committed. Following DML operations are committed automatically. <br>
+	 * If no transaction is active, this method does nothing.
+	 */
+	void commitTransaction();
+
+	/**
+	 * Rolls back and ends the current transaction. Following DML operations are committed automatically. <br>
+	 * If no transaction is active, this method does nothing.
+	 */
+	void rollbackTransaction();
+
 }

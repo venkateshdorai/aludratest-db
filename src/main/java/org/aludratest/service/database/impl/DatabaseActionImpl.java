@@ -46,6 +46,8 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
 
 	private DatabaseConfiguration config;
 
+	private boolean inTransaction;
+
 	public DatabaseActionImpl(Connection connection, DatabaseConfiguration config) {
         this.connection = connection;
 		this.config = config;
@@ -407,6 +409,67 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
 		else {
 			PollService poll = new PollService(config.getVerifyWaitTimeout(), config.getVerifyWaitInterval());
 			poll.poll(task);
+		}
+	}
+
+	@Override
+	public void beginTransaction() {
+		if (inTransaction) {
+			return;
+		}
+
+		try {
+			connection.setAutoCommit(false);
+		}
+		catch (SQLException e) {
+			throw new AutomationException("Could not switch database to manual commit mode", e);
+		}
+		inTransaction = true;
+	}
+
+	@Override
+	public void commitTransaction() {
+		if (!inTransaction) {
+			return;
+		}
+
+		try {
+			connection.commit();
+		}
+		catch (SQLException e) {
+			throw new AutomationException("Could not commit database transaction", e);
+		}
+		finally {
+			try {
+				connection.setAutoCommit(true);
+			}
+			catch (SQLException e) {
+				throw new AutomationException("Could not switch database back to auto-commit", e);
+			}
+			inTransaction = false;
+		}
+	}
+
+	@Override
+	public void rollbackTransaction() {
+		if (!inTransaction) {
+			return;
+		}
+
+		try {
+			connection.rollback();
+		}
+		catch (SQLException e) {
+			throw new AutomationException("Could not rollback database transaction", e);
+		}
+		finally {
+			try {
+				connection.setAutoCommit(true);
+			}
+			catch (SQLException e) {
+				throw new AutomationException("Could not switch database back to auto-commit", e);
+			}
+			inTransaction = false;
 		}
 	}
 

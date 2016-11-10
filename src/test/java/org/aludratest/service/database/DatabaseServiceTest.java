@@ -288,4 +288,27 @@ public class DatabaseServiceTest extends AbstractDatabaseServiceTest {
 		assertEquals(TestStatus.FAILEDAUTOMATION, getLastTestStep().getTestStatus());
     }
 
+	@Test
+	public void testTransaction() {
+		service.perform().beginTransaction();
+		service.perform().insert("INSERT INTO test1 (test_id, test_value1) VALUES(77, 'TA test')");
+		service.perform().rollbackTransaction();
+		DataRows rows = service.perform().query("SELECT 1 FROM test1 WHERE test_id = 77");
+		assertEquals(0, rows.getRowCount());
+
+		// now, auto-commit must be active again
+		service.perform().insert("INSERT INTO test1 (test_id, test_value1) VALUES(77, 'TA test')");
+		rows = service.perform().query("SELECT 1 FROM test1 WHERE test_id = 77");
+		assertEquals(1, rows.getRowCount());
+
+		// and now with a manual commit
+		service.perform().beginTransaction();
+		service.perform().insert("INSERT INTO test1 (test_id, test_value1) VALUES(78, 'TA test')");
+		service.perform().commitTransaction();
+		rows = service.perform().query("SELECT 1 FROM test1 WHERE test_id = 78");
+		assertEquals(1, rows.getRowCount());
+
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
+	}
+
 }
