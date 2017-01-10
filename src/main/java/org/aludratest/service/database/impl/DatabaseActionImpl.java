@@ -23,6 +23,7 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Collections;
 import java.util.List;
 
 import javax.sql.rowset.CachedRowSet;
@@ -226,7 +227,7 @@ public class DatabaseActionImpl implements DatabaseInteraction, DatabaseConditio
 
     @Override
     public List<Attachment> createDebugAttachments() {
-        return null;
+		return Collections.emptyList();
     }
 
     @Override
