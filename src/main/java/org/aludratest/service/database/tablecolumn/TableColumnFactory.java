@@ -76,5 +76,13 @@ public interface TableColumnFactory {
      * 
      * @return A new TimestampColumn object identifying the given column. */
     public TimestampColumn createTimestampColumn(String columnName);
+    
+    
+    /** Creates a new ClobColumn object for the column with the given name.
+     * 
+     * @param columnName Name of the column.
+     * 
+     * @return A new ClobColumn object identifying the given column. */
+    public ClobColumn createClobColumn(String columnName);
 
 }

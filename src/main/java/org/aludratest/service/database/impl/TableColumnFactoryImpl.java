@@ -15,6 +15,7 @@
  */
 package org.aludratest.service.database.impl;
 
+import org.aludratest.service.database.tablecolumn.ClobColumn;
 import org.aludratest.service.database.tablecolumn.DateColumn;
 import org.aludratest.service.database.tablecolumn.DoubleColumn;
 import org.aludratest.service.database.tablecolumn.FloatColumn;
@@ -83,5 +84,11 @@ public class TableColumnFactoryImpl implements TableColumnFactory {
             throw new IllegalArgumentException("Parameter columnName must not be null.");
         }
     }
+
+	@Override
+	public ClobColumn createClobColumn(String columnName) {
+		 assertNotNull(columnName);
+	     return new ClobColumnImpl(columnName);
+	}
 
 }

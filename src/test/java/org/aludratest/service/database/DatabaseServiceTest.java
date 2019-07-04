@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
 
+import org.aludratest.service.database.tablecolumn.ClobColumn;
 import org.aludratest.service.database.tablecolumn.DoubleColumn;
 import org.aludratest.service.database.tablecolumn.FloatColumn;
 import org.aludratest.service.database.tablecolumn.IntColumn;
@@ -308,6 +309,17 @@ public class DatabaseServiceTest extends AbstractDatabaseServiceTest {
 		rows = service.perform().query("SELECT 1 FROM test1 WHERE test_id = 78");
 		assertEquals(1, rows.getRowCount());
 
+		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
+	}
+	
+	@Test
+	public void testClob() {
+		DataRows rows = service.perform().query("SELECT * FROM documents");
+		Iterator<DataRow> iter = rows.iterator();
+        DataRow row = iter.next();
+
+        ClobColumn cc = service.getTableColumnFactory().createClobColumn("text");
+        assertNotNull(row.getValue(service, cc));
 		assertEquals(TestStatus.PASSED, getLastTestStep().getTestStatus());
 	}
 

@@ -16,8 +16,10 @@
 package org.aludratest.service.database;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -57,6 +59,10 @@ public abstract class AbstractDatabaseServiceTest extends AbstractAludraServiceT
 		sql = "CREATE TABLE test2 (test_id INTEGER NOT NULL PRIMARY KEY, test_value1 VARCHAR(100), test_value2 CHAR(10), test_value3 BIGINT, test_value4 FLOAT, test_value5 DECIMAL(12,4))";
 		executeStatement(conn, sql);
 
+		sql = "CREATE TABLE documents (id INT, text CLOB(64 K))";
+		executeStatement(conn, sql);
+		sql="INSERT INTO documents VALUES (?, ?)";
+		executePreparedStatement(conn, sql);		
 		conn.close();
 
 		this.service = getLoggingService(DatabaseService.class, "dbtest");
@@ -88,6 +94,31 @@ public abstract class AbstractDatabaseServiceTest extends AbstractAludraServiceT
 		finally {
 			try {
 				stmt.close();
+			}
+			catch (Exception e) {
+			}
+		}
+	}
+	
+	private static void executePreparedStatement(Connection conn, String sql) throws SQLException, FileNotFoundException {
+		PreparedStatement ps = null;
+		try {
+			// --- add a file
+            File file = new File("LICENSE");
+            int fileLength = (int) file.length();
+ 
+            // - first, create an input stream
+            java.io.InputStream fin = new java.io.FileInputStream(file);
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, 1477);
+			 
+            // - set the value of the input parameter to the input stream
+            ps.setAsciiStream(2, fin, fileLength);
+            ps.execute();
+		}
+		finally {
+			try {
+				ps.close();
 			}
 			catch (Exception e) {
 			}
